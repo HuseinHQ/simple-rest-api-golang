@@ -45,7 +45,7 @@ func (uh *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	validate := validator.New()
+	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(userInput); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
