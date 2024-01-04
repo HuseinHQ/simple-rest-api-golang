@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 
 	"github.com/HuseinHQ/simple-rest-api-golang/handler"
+	"github.com/HuseinHQ/simple-rest-api-golang/models"
 )
 
 func loadRoutes() *chi.Mux {
@@ -19,6 +20,7 @@ func loadRoutes() *chi.Mux {
 	})
 
 	router.Route("/orders", loadOrderRoutes)
+	router.Route("/users", loadUserRoutes)
 
 	return router
 }
@@ -31,4 +33,11 @@ func loadOrderRoutes(router chi.Router) {
 	router.Get("/{id}", orderHandler.GetById)
 	router.Put("/{id}", orderHandler.UpdateById)
 	router.Delete("/{id}", orderHandler.DeleteById)
+}
+
+func loadUserRoutes(router chi.Router) {
+	userHandler := &models.UserHandler{}
+
+	router.Get("/", userHandler.GetUsers)
+	router.Post("/register", userHandler.Register)
 }
