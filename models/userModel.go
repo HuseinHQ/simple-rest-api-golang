@@ -3,12 +3,14 @@ package models
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type User struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required, email"`
+	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
 
@@ -19,7 +21,7 @@ type LoginInput struct {
 
 type RegisterUser struct {
 	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required, email"`
+	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
 
@@ -40,6 +42,12 @@ func (uh *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	if err := decoder.Decode(&userInput); err != nil {
 		http.Error(w, "Failed to parse request body", http.StatusBadRequest)
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(userInput); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
