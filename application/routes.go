@@ -19,6 +19,7 @@ func loadRoutes() *chi.Mux {
 	// Define routes
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Hello World"))
 	})
 
 	router.Post("/register", controllers.Signup)
