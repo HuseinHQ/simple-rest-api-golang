@@ -1,16 +1,13 @@
 package models
 
 import (
-	"encoding/json"
-	"net/http"
-
-	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID       int    `json:"id"`
+	gorm.Model
 	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
+	Email    string `gorm:"unique" json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
 
@@ -19,53 +16,10 @@ type LoginInput struct {
 	Password string `json:"password" validate:"required"`
 }
 
-type RegisterUser struct {
+type RegisterInput struct {
 	Name     string `json:"name" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
 
 var Users = []User{}
-
-type UserHandler struct{}
-
-func (uh *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Users)
-}
-
-func (uh *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
-
-	var userInput RegisterUser
-
-	if err := decoder.Decode(&userInput); err != nil {
-		http.Error(w, "Failed to parse request body", http.StatusBadRequest)
-		return
-	}
-
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(userInput); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	newUser := User{
-		ID:       GenerateUserID(),
-		Name:     userInput.Name,
-		Email:    userInput.Email,
-		Password: userInput.Password,
-	}
-
-	Users = append(Users, newUser)
-
-	w.Write([]byte("New user registered successfully!"))
-}
-
-func GenerateUserID() int {
-	if len(Users) == 0 {
-		return 1
-	}
-	return Users[len(Users)-1].ID + 1
-}

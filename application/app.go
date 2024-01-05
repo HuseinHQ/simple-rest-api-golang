@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 type App struct {
@@ -20,7 +21,7 @@ func New() *App {
 
 func (a *App) Start(ctx context.Context) error {
 	server := &http.Server{
-		Addr:    ":3000",
+		Addr:    os.Getenv("PORT"),
 		Handler: a.router,
 	}
 

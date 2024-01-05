@@ -4,8 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/HuseinHQ/simple-rest-api-golang/application"
+	"simple-rest-api-golang/application"
+	"simple-rest-api-golang/initializers"
 )
+
+func init() {
+	initializers.LoadEnvVariables()
+	initializers.ConnectToDb()
+	initializers.SyncDatabase()
+}
 
 func main() {
 	app := application.New()
