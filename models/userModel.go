@@ -22,4 +22,10 @@ type RegisterInput struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type UserResponse struct {
+	gorm.Model
+	Name  string `json:"name" validate:"required"`
+	Email string `gorm:"unique" json:"email" validate:"required,email"`
+}
+
 var Users = []User{}
